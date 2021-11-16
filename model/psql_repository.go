@@ -23,7 +23,6 @@ var psqlRepo PSQLRepository
 
 func InitPSQLRepository(dsn string) (PSQLRepository, error) {
 
-	//dsn := "host=localhost user=gorm password=gorm dbname=gorm port=9920 sslmode=disable TimeZone=Asia/Shanghai"
 	_db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
 		return PSQLRepository{}, err
@@ -42,18 +41,13 @@ func (r PSQLRepository) AddVideo(video Video) error {
 
 	existingVideo := Video{}
 	err := r.db.First(&existingVideo, video.ID).Error
-	if err == gorm.ErrRecordNotFound {
-		return ErrDuplicateVideo
-	} else if err != nil {
-		return err
-	}
-	err = r.db.Create(&video).Error
-
-	if err != nil {
-		return err
+	if err == nil {
+		err = ErrDuplicateVideo
+	} else if err == gorm.ErrRecordNotFound {
+		err = r.db.Create(&video).Error
 	}
 
-	return nil
+	return err
 }
 
 func (r PSQLRepository) AddPlaylist(playlist Playlist) {
