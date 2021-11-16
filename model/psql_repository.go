@@ -9,10 +9,10 @@ import (
 )
 
 var (
-	ErrDatabase            = errors.New("Error during the query")
-	ErrNoMatchingPassword  = errors.New("The password does not match")
-	ErrDuplicateVideo      = errors.New("The video is already stored in the database")
-	ErrMultipeRepoInstance = errors.New("There is an instance of the repository")
+	ErrDatabase            = errors.New("error during the query")
+	ErrNoMatchingPassword  = errors.New("the password does not match")
+	ErrDuplicateVideo      = errors.New("the video is already stored in the database")
+	ErrMultipeRepoInstance = errors.New("there is an instance of the repository")
 )
 
 type PSQLRepository struct {
