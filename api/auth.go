@@ -3,7 +3,6 @@ package api
 import (
 	"fmt"
 	"log"
-	"recovertube/model"
 
 	"github.com/gin-gonic/gin"
 	"gopkg.in/square/go-jose.v2"
@@ -16,6 +15,12 @@ var encrypter jose.Encrypter
 type LoginForm struct {
 	email    string `form:"email"`
 	password string `form:"password"`
+}
+
+type RegisterForm struct {
+	email           string `form:"email"`
+	password        string `form:"password"`
+	confirmPassword string `form"confirm_password`
 }
 
 func init() {
@@ -55,7 +60,7 @@ func AuthMiddleware() gin.HandlerFunc {
 
 func Login() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		var credentials LoginForm
+		credentials := LoginForm{}
 		err := c.ShouldBind(&credentials)
 		if err != nil {
 			log.Printf("Error parsing login form %s", err)
@@ -63,7 +68,7 @@ func Login() gin.HandlerFunc {
 		}
 
 		//TODO: salt password
-		model.CompareLogin(credentials.email, credentials.password)
+		//model.CompareLogin(credentials.email, credentials.password)
 
 		json := fmt.Sprintf(`{user: "%s"}`, credentials.email)
 		obj, err := encrypter.Encrypt([]byte(json))
@@ -76,4 +81,16 @@ func Login() gin.HandlerFunc {
 		c.JSON(200, fmt.Sprintf(`{Token:"%s"}`, serialized))
 	}
 
+}
+
+func Register() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		registerForm := RegisterForm{}
+		err := c.ShouldBind(&registerForm)
+		if err != nil {
+			log.Printf("Error processing the form %s", err)
+			c.JSON(500, "Error processing the form ")
+		}
+
+	}
 }

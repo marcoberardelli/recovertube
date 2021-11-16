@@ -1,11 +1,10 @@
 package api
 
-package api
-
 import (
 	"fmt"
-	"go-recover/model"
 	"time"
+
+	"recovertube/model"
 
 	"github.com/gin-gonic/gin"
 	"google.golang.org/api/youtube/v3"
@@ -41,14 +40,16 @@ func AddVideo(c *gin.Context) {
 		Channel:    "marcoberardelli",
 		Available:  true,
 		ImagePath:  "adsadsad/sadsad/images",
-		LastUpdate: time.Now().Unix(),
+		LastUpdate: time.Now(),
 	}
-	added, err := model.AddVideo(video)
+	repo, err := model.GetPSQLRepository()
+	err = repo.AddVideo(video)
+	//TODO: fix error check
 	if err != nil {
 		c.JSON(500, "Error on saving the video")
 	}
 
-	c.JSON(200, fmt.Sprintf("added: %t", added))
+	c.JSON(200, fmt.Sprintf("added vieo:%s", video.ID))
 
 }
 

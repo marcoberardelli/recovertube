@@ -1,18 +1,10 @@
 package model
 
 import (
-	"errors"
 	"log"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
-)
-
-var (
-	ErrDatabase            = errors.New("error during the query")
-	ErrNoMatchingPassword  = errors.New("the password does not match")
-	ErrDuplicateVideo      = errors.New("the video is already stored in the database")
-	ErrMultipeRepoInstance = errors.New("there is an instance of the repository")
 )
 
 type PSQLRepository struct {
@@ -27,7 +19,8 @@ func InitPSQLRepository(dsn string) (PSQLRepository, error) {
 	if err != nil {
 		return PSQLRepository{}, err
 	}
-	return PSQLRepository{db: _db}, nil
+	psqlRepo = PSQLRepository{db: _db}
+	return psqlRepo, nil
 }
 
 func GetPSQLRepository() (PSQLRepository, error) {
