@@ -42,7 +42,7 @@ func AddVideo(c *gin.Context) {
 		ImagePath:  "adsadsad/sadsad/images",
 		LastUpdate: time.Now(),
 	}
-	repo, err := model.GetPSQLRepository()
+	repo, err := model.GetYTRepository()
 	err = repo.AddVideo(video)
 	//TODO: fix error check
 	if err != nil {

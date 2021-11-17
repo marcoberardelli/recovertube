@@ -3,34 +3,33 @@ package model
 import (
 	"log"
 
-	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
 
-type PSQLRepository struct {
+type YoutTubeDBRepository struct {
 	db *gorm.DB
 }
 
-var psqlRepo PSQLRepository
+var ytRepo YoutTubeDBRepository
 
-func InitPSQLRepository(dsn string) (PSQLRepository, error) {
+func InitYTRepository(dialector gorm.Dialector) (YoutTubeDBRepository, error) {
 
-	_db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+	_db, err := gorm.Open(dialector, &gorm.Config{})
 	if err != nil {
-		return PSQLRepository{}, err
+		return YoutTubeDBRepository{}, err
 	}
-	psqlRepo = PSQLRepository{db: _db}
-	return psqlRepo, nil
+	ytRepo = YoutTubeDBRepository{db: _db}
+	return ytRepo, nil
 }
 
-func GetPSQLRepository() (PSQLRepository, error) {
-	if psqlRepo.db == nil {
-		return PSQLRepository{}, ErrMultipeRepoInstance
+func GetYTRepository() (YoutTubeDBRepository, error) {
+	if ytRepo.db == nil {
+		return YoutTubeDBRepository{}, ErrMultipeRepoInstance
 	}
-	return psqlRepo, nil
+	return ytRepo, nil
 }
 
-func (r PSQLRepository) AddVideo(video Video) error {
+func (r YoutTubeDBRepository) AddVideo(video Video) error {
 
 	existingVideo := Video{}
 	err := r.db.First(&existingVideo, video.ID).Error
@@ -43,7 +42,7 @@ func (r PSQLRepository) AddVideo(video Video) error {
 	return err
 }
 
-func (r PSQLRepository) AddPlaylist(playlist Playlist) {
+func (r YoutTubeDBRepository) AddPlaylist(playlist Playlist) {
 	for _, v := range playlist.Videos {
 		err := r.AddVideo(v)
 		if err == nil {
@@ -59,15 +58,15 @@ func (r PSQLRepository) AddPlaylist(playlist Playlist) {
 	}
 }
 
-func (r PSQLRepository) GetVideo(id string) (Video, error) {
+func (r YoutTubeDBRepository) GetVideo(id string) (Video, error) {
 
 	return Video{}, nil
 }
 
-func (r PSQLRepository) IsVideoAvailable(id string) (bool, error) {
+func (r YoutTubeDBRepository) IsVideoAvailable(id string) (bool, error) {
 	return false, nil
 }
 
-func (r PSQLRepository) GetPlaylist(id string) (Playlist, error) {
+func (r YoutTubeDBRepository) GetPlaylist(id string) (Playlist, error) {
 	return Playlist{}, nil
 }
