@@ -3,6 +3,7 @@ package model
 import (
 	"log"
 
+	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
 
@@ -12,9 +13,9 @@ type YoutTubeDBRepository struct {
 
 var ytRepo YoutTubeDBRepository
 
-func InitYTRepository(dialector gorm.Dialector) (YoutTubeDBRepository, error) {
+func InitYTRepository(dsn string) (YoutTubeDBRepository, error) {
 
-	_db, err := gorm.Open(dialector, &gorm.Config{})
+	_db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
 		return YoutTubeDBRepository{}, err
 	}
@@ -24,7 +25,7 @@ func InitYTRepository(dialector gorm.Dialector) (YoutTubeDBRepository, error) {
 
 func GetYTRepository() (YoutTubeDBRepository, error) {
 	if ytRepo.db == nil {
-		return YoutTubeDBRepository{}, ErrMultipeRepoInstance
+		return YoutTubeDBRepository{}, ErrNoRepoInstance
 	}
 	return ytRepo, nil
 }

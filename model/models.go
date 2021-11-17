@@ -6,6 +6,7 @@ import (
 )
 
 var (
+	ErrNoRepoInstance      = errors.New("no instance of the repository")
 	ErrUsedEmail           = errors.New("email is already used")
 	ErrNoMatchingPassword  = errors.New("the password does not match")
 	ErrDatabase            = errors.New("error during the query")
