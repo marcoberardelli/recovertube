@@ -20,6 +20,7 @@ func InitYTRepository(dsn string) (YoutTubeDBRepository, error) {
 		return YoutTubeDBRepository{}, err
 	}
 	ytRepo = YoutTubeDBRepository{db: _db}
+	ytRepo.db.AutoMigrate(&User{}, &Video{}, &Playlist{})
 	return ytRepo, nil
 }
 

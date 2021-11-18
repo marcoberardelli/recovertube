@@ -33,16 +33,16 @@ type User struct {
 	Email            string
 	Password         string
 	YoutubeAuthToken string
-	AUthToken        string
+	AuthToken        string
 }
 
 type Video struct {
 	ID         string
-	Title      string
-	Channel    string
-	Available  bool
-	ImagePath  string
-	LastUpdate time.Time
+	Title      string    `gorm:"not null"`
+	Channel    string    `gorm:"not null"`
+	Available  bool      `gorm:"not null"`
+	ImagePath  string    `gorm:"not null"`
+	LastUpdate time.Time `gorm:"not null"`
 }
 
 type Playlist struct {

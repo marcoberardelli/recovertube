@@ -2,6 +2,8 @@ package main
 
 import (
 	"log"
+	"os"
+	"recovertube/model"
 
 	"github.com/joho/godotenv"
 )
@@ -12,7 +14,7 @@ func main() {
 	if err != nil {
 		log.Fatal("Error loading .env file")
 	}
-
+	model.InitYTRepository(os.Getenv("PSQL_DSN"))
 	/*
 		service, err := youtube.NewService(context.Background(), option.WithAPIKey(YOUTUBE_KEY))
 		if err != nil {

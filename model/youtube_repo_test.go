@@ -1,6 +1,7 @@
 package model
 
 import (
+	"os"
 	"testing"
 
 	"github.com/DATA-DOG/go-sqlmock"
@@ -34,6 +35,21 @@ func TestGetYTRepository(t *testing.T) {
 }
 
 func TestAddVideo(t *testing.T) {
+	_db, mock, err := sqlmock.New()
+	sqlmock.NewWithDSN(os.Getenv("PSQL_DSN"))
+	if err != nil {
+		t.Fail()
+	}
+	dialector := postgres.New(postgres.Config{
+		Conn:       _db,
+		DriverName: "postgres",
+	})
+	db, err := gorm.Open(dialector, &gorm.Config{PrepareStmt: false})
+	if err != nil {
+		t.Fail()
+	}
+	ytRepo = YoutTubeDBRepository{db: db}
+	mock.ExpectBegin()
 
 }
 
