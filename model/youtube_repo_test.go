@@ -9,6 +9,8 @@ import (
 	"gorm.io/gorm"
 )
 
+var videos = []Video{Video{ID: "dQw4w9WgXcQ", Title: "Rick Astley - Never Gonna Give You Up (Official Music Video)"}}
+
 func TestGetYTRepository(t *testing.T) {
 	_, errS := GetYTRepository()
 	if errS != ErrNoRepoInstance {
@@ -32,6 +34,12 @@ func TestGetYTRepository(t *testing.T) {
 	if err != nil {
 		t.Fail()
 	}
+	db_, err := ytRepo.db.DB()
+	if err != nil {
+		t.Fail()
+	}
+	db_.Ping()
+
 }
 
 func TestAddVideo(t *testing.T) {
@@ -50,9 +58,22 @@ func TestAddVideo(t *testing.T) {
 	}
 	ytRepo = YoutTubeDBRepository{db: db}
 	mock.ExpectBegin()
+	mock.ExpectExec("INSERT INTO video ")
 
 }
 
 func TestGetVideo(t *testing.T) {
+
+}
+
+func TestIsVideoAvailable(t *testing.T) {
+
+}
+
+func TestAddPlaylist(t *testing.T) {
+
+}
+
+func TestGetPlaylist(t *testing.T) {
 
 }

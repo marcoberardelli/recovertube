@@ -1,18 +1,21 @@
 package api
 
 import (
+	"context"
 	"fmt"
+	"log"
 	"time"
 
+	"os"
 	"recovertube/model"
 
 	"github.com/gin-gonic/gin"
+	"google.golang.org/api/option"
 	"google.golang.org/api/youtube/v3"
 )
 
 var service *youtube.Service
 
-/*
 func init() {
 
 	youtubeApiKey := os.Getenv("YOUTUBE_KEY")
@@ -24,7 +27,6 @@ func init() {
 	}
 
 }
-*/
 
 func AddVideo(c *gin.Context) {
 	id := c.PostForm("video_id")
@@ -43,6 +45,10 @@ func AddVideo(c *gin.Context) {
 		LastUpdate: time.Now(),
 	}
 	repo, err := model.GetYTRepository()
+	if err != nil {
+		log.Printf("Error adding a video %+v", err)
+		c.JSON(500, "Error adding video")
+	}
 	err = repo.AddVideo(video)
 	//TODO: fix error check
 	if err != nil {

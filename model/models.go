@@ -15,8 +15,9 @@ var (
 )
 
 type YoutubeRepository interface {
-	AddVideo(video Video) error
-	AddPlaylist(playlist Playlist)
+	SaveVideo(video Video, user_id string) error
+	SaveVideoPlaylist(video Video, userID, playlistID string) error
+	AddPlaylist(playlist Playlist, user_id string)
 	GetVideo(id string) (Video, error)
 	IsVideoAvailable(id string) (bool, error)
 	GetPlaylist(id string) (Playlist, error)
@@ -29,11 +30,12 @@ type AuthenticationRepository interface {
 }
 
 type User struct {
-	ID               string `gorm:"size:12`
+	ID               string `gorm:"size:12"`
 	Email            string
 	Password         string
 	YoutubeAuthToken string
 	AuthToken        string
+	SavedVideos      []Video `gorm:"many2many:user_video;"`
 }
 
 type Video struct {
@@ -45,8 +47,18 @@ type Video struct {
 	LastUpdate time.Time `gorm:"not null"`
 }
 
+type UserVideo struct {
+	UserID  string `gorm:"primaryKey"`
+	VideoID string `gorm:"primaryKey"`
+}
+
+type PlaylistVideo struct {
+	PlaylistID string `gorm:"primaryKey"`
+	VideoID    string `gorm:"primaryKey"`
+}
+
 type Playlist struct {
-	ID      string  `gorm:"size:12`
-	OwnerID string  `gorm:"size:12`
-	Videos  []Video `gorm:"many2many:playlist_videos;"`
+	ID      string  `gorm:"size:12"`
+	OwnerID string  `gorm:"size:12"`
+	Videos  []Video `gorm:"many2many:playlist_video;"`
 }
