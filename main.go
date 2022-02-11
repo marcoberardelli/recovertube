@@ -14,11 +14,11 @@ func main() {
 	if err != nil {
 		log.Fatal("Error loading .env file")
 	}
-	repo, err := model.InitYTRepository(os.Getenv("PSQL_DSN"))
+	//repo, err := model.InitYTRepository(os.Getenv("PSQL_DSN"))
+	_, err = model.InitYTRepository(os.Getenv("PSQL_DSN"))
 	if err != nil {
 		log.Fatalf("Error during YTRepository initialization")
 	}
-	repo.SaveVideo()
 	/*
 		service, err := youtube.NewService(context.Background(), option.WithAPIKey(YOUTUBE_KEY))
 		if err != nil {

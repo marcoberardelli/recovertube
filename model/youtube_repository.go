@@ -2,6 +2,7 @@ package model
 
 import (
 	"log"
+	"os"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -13,15 +14,26 @@ type YoutTubeDBRepository struct {
 
 var ytRepo YoutTubeDBRepository
 
-func InitYTRepository(dsn string) (YoutTubeDBRepository, error) {
-
+func initYouTubeRepository(dsn string) error {
 	_db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
-		return YoutTubeDBRepository{}, err
+		return err
 	}
 	ytRepo = YoutTubeDBRepository{db: _db}
 	ytRepo.db.AutoMigrate(&User{}, &Video{}, &Playlist{})
-	return ytRepo, nil
+	return nil
+}
+
+func init() {
+	dsn := os.Getenv("PSQL_DSN")
+	err := initYouTubeRepository(dsn)
+	if err != nil {
+		log.Fatalf("Error initializing YoutubeRepository")
+	}
+	err = initAuthRepository(dsn)
+	if err != nil {
+		log.Fatalf("Error initializing AuthRepository")
+	}
 }
 
 func GetYTRepository() (YoutTubeDBRepository, error) {

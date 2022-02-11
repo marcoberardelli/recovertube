@@ -11,14 +11,13 @@ type AuthRepository struct {
 
 var authRepo AuthRepository
 
-func InitAuthRepository(dsn string) (AuthRepository, error) {
-
+func initAuthRepository(dsn string) error {
 	_db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
-		return AuthRepository{}, err
+		return err
 	}
 	authRepo = AuthRepository{db: _db}
-	return authRepo, nil
+	return nil
 }
 
 func GetAuthRepository() (AuthRepository, error) {

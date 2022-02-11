@@ -48,7 +48,7 @@ func GetVideo(id string) (m.Video, error) {
 }
 
 func GetPlaylist(id string) (m.Playlist, error) {
-	part := []string{"snippet"}
+	//part := []string{"snippet"}
 
 }
 
