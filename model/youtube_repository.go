@@ -58,6 +58,8 @@ func (r YoutTubeDBRepository) SaveVideo(video Video, userID string) error {
 	// Updating join table
 	err = r.db.Table("user_video").Create(&UserVideo{userID, video.ID}).Error
 
+	//TODO: store preview img
+
 	return err
 }
 

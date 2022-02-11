@@ -28,6 +28,11 @@ type AuthenticationRepository interface {
 	Logout(user User) error
 }
 
+type PreviewImgStore interface {
+	SaveImage(url string)
+	GetImage(videoID string)
+}
+
 type User struct {
 	ID               string `gorm:"size:12"`
 	Email            string
