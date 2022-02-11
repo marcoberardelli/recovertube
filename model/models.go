@@ -15,7 +15,7 @@ var (
 
 type YoutubeRepository interface {
 	SaveVideo(video Video, user_id string) error
-	SaveVideoPlaylist(video Video, userID, playlistID string) error
+	SavePlaylistVideo(video Video, playlistID, userID string) error
 	AddPlaylist(playlist Playlist, user_id string)
 	GetVideo(id string) (Video, error)
 	IsVideoAvailable(id string) (bool, error)

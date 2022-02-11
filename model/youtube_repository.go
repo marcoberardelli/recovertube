@@ -63,7 +63,7 @@ func (r YoutTubeDBRepository) SaveVideo(video Video, userID string) error {
 	return err
 }
 
-func (r YoutTubeDBRepository) SaveVideoPlaylist(video Video, userID, playlistID string) error {
+func (r YoutTubeDBRepository) SavePlaylistVideo(video Video, playlistID, userID string) error {
 
 	err := r.SaveVideo(video, userID)
 	if err != nil {

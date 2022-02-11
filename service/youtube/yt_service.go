@@ -1,4 +1,4 @@
-package service
+package youtube
 
 import (
 	"context"
@@ -49,7 +49,7 @@ func GetVideo(id string) (m.Video, error) {
 
 func GetPlaylist(id string) (m.Playlist, error) {
 	//part := []string{"snippet"}
-
+	return m.Playlist{}, nil
 }
 
 func GetUserPlaylist(id string) {
