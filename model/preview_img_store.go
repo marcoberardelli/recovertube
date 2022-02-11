@@ -13,6 +13,8 @@ type PreviewImgLocal struct {
 	basePath string
 }
 
+var imgLocalStore = PreviewImgLocal{"img/"}
+
 func (l PreviewImgLocal) SaveImage(url, filename string) error {
 
 	response, err := http.Get(url)

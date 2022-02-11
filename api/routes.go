@@ -27,17 +27,6 @@ func AddVideo(c *gin.Context) {
 		log.Fatalf("Error getting video info from youtube")
 		c.JSON(500, "Error getting video info from youtube")
 	}
-	/*
-		video := model.Video{
-			ID:         "videoID",
-			Title:      "Come fare un webserver in go",
-			Channel:    "marcoberardelli",
-			Available:  true,
-			ImagePath:  "adsadsad/sadsad/images",
-			LastUpdate: time.Now(),
-		}
-
-	*/
 
 	repo, err := model.GetYTRepository()
 	if err != nil {
