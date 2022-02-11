@@ -47,18 +47,16 @@ func (r YoutTubeDBRepository) SaveVideo(video Video, userID string) error {
 
 	existingVideo := Video{}
 	err := r.db.First(&existingVideo, "id = ?", video.ID).Error
-	if err == nil {
-		err = ErrDuplicateVideo
-
-	} else if err == gorm.ErrRecordNotFound {
+	if err == gorm.ErrRecordNotFound {
 		err = r.db.Create(&video).Error
 		if err != nil {
 			return err
 		}
-
-		// Updating join table
-		err = r.db.Table("user_video").Create(&UserVideo{userID, video.ID}).Error
+	} else if err != nil {
+		return err
 	}
+	// Updating join table
+	err = r.db.Table("user_video").Create(&UserVideo{userID, video.ID}).Error
 
 	return err
 }
@@ -82,7 +80,7 @@ func (r YoutTubeDBRepository) AddPlaylist(playlist Playlist, user_id string) err
 			// Correctly added the video
 			log.Printf("Added %s", v.Title)
 
-		} else if err == ErrDuplicateVideo {
+		} else if err == ErrExistingVideo {
 			// Already in db
 			log.Printf("Already present %s : %s", v.ID, v.Title)
 			// Updating join table

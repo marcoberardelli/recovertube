@@ -6,12 +6,11 @@ import (
 )
 
 var (
-	ErrNoRepoInstance      = errors.New("no instance of the repository")
-	ErrUsedEmail           = errors.New("email is already used")
-	ErrNoMatchingPassword  = errors.New("the password does not match")
-	ErrDatabase            = errors.New("error during the query")
-	ErrDuplicateVideo      = errors.New("the video is already stored in the database")
-	ErrMultipeRepoInstance = errors.New("there is an instance of the repository")
+	ErrNoRepoInstance     = errors.New("missing instance of repository")
+	ErrUsedEmail          = errors.New("email is already used")
+	ErrNoMatchingPassword = errors.New("the password does not match")
+	ErrDatabase           = errors.New("error during the query")
+	ErrExistingVideo      = errors.New("the video is already stored in the database")
 )
 
 type YoutubeRepository interface {

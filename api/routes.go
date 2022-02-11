@@ -1,21 +1,14 @@
 package api
 
 import (
-	"context"
 	"fmt"
 	"log"
-	"time"
 
-	"os"
 	"recovertube/model"
-	"recovertube/service"
+	"recovertube/youtube"
 
 	"github.com/gin-gonic/gin"
-	"google.golang.org/api/option"
-	"google.golang.org/api/youtube/v3"
 )
-
-
 
 func AddVideo(c *gin.Context) {
 	id := c.PostForm("video_id")
@@ -29,18 +22,23 @@ func AddVideo(c *gin.Context) {
 		c.JSON(500, "Internal error")
 	}
 
-	
-	//TODO:
-	video := 
-	// Call to YouTube API to get info of the video
-	video := model.Video{
-		ID:         "videoID",
-		Title:      "Come fare un webserver in go",
-		Channel:    "marcoberardelli",
-		Available:  true,
-		ImagePath:  "adsadsad/sadsad/images",
-		LastUpdate: time.Now(),
+	video, err := youtube.GetVideo(id)
+	if err != nil {
+		log.Fatalf("Error getting video info from youtube")
+		c.JSON(500, "Error getting video info from youtube")
 	}
+	/*
+		video := model.Video{
+			ID:         "videoID",
+			Title:      "Come fare un webserver in go",
+			Channel:    "marcoberardelli",
+			Available:  true,
+			ImagePath:  "adsadsad/sadsad/images",
+			LastUpdate: time.Now(),
+		}
+
+	*/
+
 	repo, err := model.GetYTRepository()
 	if err != nil {
 		log.Printf("Error adding a video %+v", err)
@@ -57,6 +55,34 @@ func AddVideo(c *gin.Context) {
 }
 
 func AddVideoPlaylist(c *gin.Context) {
+	//TODO: add in youtube playlist
+	videoID := c.PostForm("video_id")
+	playlistID := c.PostForm("playlist_id")
+
+	token, _ := c.Get("User")
+	tokenSerialized, ok := token.(string)
+	if !ok {
+		log.Printf("Error retreiving oauth token")
+		c.JSON(500, "Internal error")
+	}
+	ytRepo, err := model.GetYTRepository()
+	if err != nil {
+		log.Printf("Error retreiving yt repo")
+		c.JSON(500, "Internal error ")
+	}
+	video, err := youtube.GetVideo(videoID)
+	if err != nil {
+		log.Printf("Error calling youtube api")
+		c.JSON(500, "Internal error")
+	}
+	err = ytRepo.SaveVideoPlaylist(video, tokenSerialized, playlistID)
+	if err != nil {
+		log.Printf("Error saving the video: %+v", err)
+		c.JSON(500, "Internal error")
+	}
+
+	log.Printf("Added video: %s", video.Title)
+	c.JSON(200, "ok")
 
 }
 

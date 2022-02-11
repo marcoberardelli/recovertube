@@ -22,7 +22,7 @@ func initAuthRepository(dsn string) error {
 
 func GetAuthRepository() (AuthRepository, error) {
 	if authRepo.db == nil {
-		return AuthRepository{}, ErrMultipeRepoInstance
+		return AuthRepository{}, ErrNoRepoInstance
 	}
 	return authRepo, nil
 }
