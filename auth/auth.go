@@ -14,17 +14,19 @@ import (
 	"golang.org/x/oauth2/google"
 )
 
-// Application credentials (not for the users), used for YouTube API
+// Application credentials for YouTube API
 type oAuthCredential struct {
 	Cid     string `json:"client_id"`
 	Csecret string `json:"client_secret"`
 }
 
+// Used as payload for JWE token
 type UserCredential struct {
 	ID         int32         `json:"user_id"`
 	OAuthToken *oauth2.Token `json:"oauth_token"`
 }
 
+// Google profile info
 type UserInfo struct {
 	Email         string `json:"email"`
 	EmailVerified bool   `json:"email_verified"`
@@ -45,14 +47,14 @@ func init() {
 	// Register the struct oauth2.Token for http sessions
 	gob.Register(&oauth2.Token{})
 
+	// Load application credentials
 	file, err := ioutil.ReadFile("creds.json")
 	if err != nil {
 		log.Fatalf("Error reading oAuth2 credentials %s", err.Error())
 	}
-
-	// Loading credentials for Google API
 	var credentials oAuthCredential
 	json.Unmarshal(file, &credentials)
+
 	oautConfig = &oauth2.Config{
 		ClientID:     credentials.Cid,
 		ClientSecret: credentials.Csecret,
@@ -64,7 +66,6 @@ func init() {
 		},
 		Endpoint: google.Endpoint,
 	}
-
 }
 
 // Hash the string using bcrypt
@@ -76,12 +77,12 @@ func Hash(plainText string) (string, error) {
 	return string(hash), nil
 }
 
-// Retun the URL for authentica with google OAuth
+// Retun the URL for authentication with google OAuth
 func GetOAuthURL(state string) string {
 	return oautConfig.AuthCodeURL(state)
 }
 
-// Get google's OAuth token
+// Get Google OAuth token
 func GetOAuthToken(code string) (*oauth2.Token, error) {
 	token, err := oautConfig.Exchange(context.TODO(), code)
 	if err != nil {

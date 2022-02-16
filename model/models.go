@@ -15,18 +15,14 @@ var (
 )
 
 type YoutubeRepository interface {
-	SaveVideo(video Video, user_id string) error
-	SavePlaylistVideo(video Video, playlistID, userID string) error
-	AddPlaylist(playlist Playlist, user_id string)
-	GetVideo(id string) (Video, error)
+	GetVideo(id string, userID int32) (Video, error)
+	GetAllVideos(id string, userID int32) ([]Video, error)
+	SaveVideo(video Video, playlistID string, userID int32) error
 	IsVideoAvailable(id string) (bool, error)
-	GetPlaylist(id string) (Playlist, error)
-}
-
-type AuthenticationRepository interface {
-	Register(email, password string) error
-	Login(email, password string) (string, error)
-	Logout(user User) error
+	GetPlaylist(id string, userID int32) (Playlist, error)
+	GetAllPlaylists(userID int32) ([]Playlist, error)
+	AddPlaylist(playlist Playlist, userID int32) error
+	NewPlaylist(playlist Playlist, userID int32) error
 }
 
 type ThumbnailStore interface {

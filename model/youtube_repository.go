@@ -37,7 +37,7 @@ func GetYTRepository() (YoutTubeDBRepository, error) {
 	return ytRepo, nil
 }
 
-func (r YoutTubeDBRepository) SaveVideo(video Video, userID int32) error {
+func (r YoutTubeDBRepository) SaveVideo(video Video, playlistID string, userID int32) error {
 
 	existingVideo := Video{}
 	err := r.db.First(&existingVideo, "id = ?", video.ID).Error
@@ -58,25 +58,18 @@ func (r YoutTubeDBRepository) SaveVideo(video Video, userID int32) error {
 	}
 
 	// Updating join table
-	err = r.db.Table("user_video").Create(&UserVideo{userID, video.ID}).Error
-	return err
-}
-
-func (r YoutTubeDBRepository) SavePlaylistVideo(video Video, playlistID string, userID int32) error {
-
-	err := r.SaveVideo(video, userID)
+	err = r.db.Table("playlist_video").Create(&PlaylistVideo{playlistID, video.ID}).Error
 	if err != nil {
+		log.Printf("Error updating join playlist_video table")
 		return err
 	}
-
-	err = r.db.Table("playlist_video").Create(&PlaylistVideo{playlistID, video.ID}).Error
-
+	err = r.db.Table("user_video").Create(&UserVideo{userID, video.ID}).Error
 	return err
 }
 
 func (r YoutTubeDBRepository) AddPlaylist(playlist Playlist, userID int32) error {
 	for _, v := range playlist.Videos {
-		err := r.SaveVideo(v, userID)
+		err := r.SaveVideo(v, playlist.ID, userID)
 		if err == nil {
 			// Correctly added the video
 			log.Printf("Added %s", v.Title)
@@ -111,4 +104,8 @@ func (r YoutTubeDBRepository) IsVideoAvailable(id string) (bool, error) {
 
 func (r YoutTubeDBRepository) GetPlaylist(id string) (Playlist, error) {
 	return Playlist{}, nil
+}
+
+func (r YoutTubeDBRepository) GetAllPlaylists(userID int32) ([]Playlist, error) {
+	return []Playlist{}, nil
 }
