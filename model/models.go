@@ -35,12 +35,10 @@ type ThumbnailStore interface {
 }
 
 type User struct {
-	ID               string `gorm:"size:12"`
-	Email            string
-	Password         string
-	YoutubeAuthToken string
-	AuthToken        string
-	SavedVideos      []Video `gorm:"many2many:user_video;"`
+	ID    int32
+	Email string
+	//Playlists   []Playlist
+	SavedVideos []Video `gorm:"many2many:user_video;"`
 }
 
 type Video struct {
@@ -53,7 +51,7 @@ type Video struct {
 }
 
 type UserVideo struct {
-	UserID  string `gorm:"primaryKey"`
+	UserID  int32  `gorm:"primaryKey"`
 	VideoID string `gorm:"primaryKey"`
 }
 
@@ -64,6 +62,7 @@ type PlaylistVideo struct {
 
 type Playlist struct {
 	ID      string  `gorm:"size:12"`
-	OwnerID string  `gorm:"size:12"`
+	OwnerID int32   `gorm:"size:12"`
+	Owner   User    `gorm:"size:12;foreignKey:OwnerID"`
 	Videos  []Video `gorm:"many2many:playlist_video;"`
 }

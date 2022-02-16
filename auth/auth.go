@@ -2,6 +2,7 @@ package auth
 
 import (
 	"context"
+	"encoding/gob"
 	"encoding/json"
 	"io/ioutil"
 	"log"
@@ -20,27 +21,38 @@ type oAuthCredential struct {
 }
 
 type UserCredential struct {
-	UserID     string `json: "user_id"`
-	OAuthToken string `json: "oauth_token"`
+	ID         int32         `json:"user_id"`
+	OAuthToken *oauth2.Token `json:"oauth_token"`
+}
+
+type UserInfo struct {
+	Email         string `json:"email"`
+	EmailVerified bool   `json:"email_verified"`
+	Picture       string `json:"picture"`
 }
 
 var oautConfig *oauth2.Config
 var aesKey string
 
 func init() {
+
+	// Retreiving AES key from env
 	aesKey = os.Getenv("AES_KEY")
 	if aesKey == "" {
 		log.Fatalf("No AES key")
 	}
+
+	// Register the struct oauth2.Token for http sessions
+	gob.Register(&oauth2.Token{})
 
 	file, err := ioutil.ReadFile("creds.json")
 	if err != nil {
 		log.Fatalf("Error reading oAuth2 credentials %s", err.Error())
 	}
 
+	// Loading credentials for Google API
 	var credentials oAuthCredential
 	json.Unmarshal(file, &credentials)
-	log.Printf("CLIENT ID: %s, CSECRET: %s", credentials.Cid, credentials.Csecret)
 	oautConfig = &oauth2.Config{
 		ClientID:     credentials.Cid,
 		ClientSecret: credentials.Csecret,
@@ -48,9 +60,11 @@ func init() {
 		Scopes: []string{
 			"https://www.googleapis.com/auth/youtube",
 			"https://www.googleapis.com/auth/youtubepartner",
+			"https://www.googleapis.com/auth/userinfo.email",
 		},
 		Endpoint: google.Endpoint,
 	}
+
 }
 
 // Hash the string using bcrypt
@@ -74,4 +88,21 @@ func GetOAuthToken(code string) (*oauth2.Token, error) {
 		return &oauth2.Token{}, err
 	}
 	return token, nil
+}
+
+func GetUserInfo(token *oauth2.Token) (UserInfo, error) {
+
+	client := oautConfig.Client(context.TODO(), token)
+	res, err := client.Get("https://www.googleapis.com/oauth2/v3/userinfo")
+	if err != nil {
+		return UserInfo{}, err
+	}
+	defer res.Body.Close()
+	data, _ := ioutil.ReadAll(res.Body)
+	var info UserInfo
+	err = json.Unmarshal(data, &info)
+	if err != nil {
+		return UserInfo{}, err
+	}
+	return info, nil
 }

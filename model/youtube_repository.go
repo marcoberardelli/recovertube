@@ -15,14 +15,19 @@ type YoutTubeDBRepository struct {
 
 var ytRepo YoutTubeDBRepository
 
-func init() {
-	dsn := os.Getenv("PSQL_DSN")
+func initYouTubeRepository(dsn string) {
 	_db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
 		log.Fatalf("Error initializing yt repo")
 	}
 	ytRepo = YoutTubeDBRepository{db: _db}
 	ytRepo.db.AutoMigrate(&User{}, &Video{}, &Playlist{})
+}
+
+func init() {
+	dsn := os.Getenv("PSQL_DSN")
+	initYouTubeRepository(dsn)
+	initUserRepository(dsn)
 }
 
 func GetYTRepository() (YoutTubeDBRepository, error) {
@@ -32,7 +37,7 @@ func GetYTRepository() (YoutTubeDBRepository, error) {
 	return ytRepo, nil
 }
 
-func (r YoutTubeDBRepository) SaveVideo(video Video, userID string) error {
+func (r YoutTubeDBRepository) SaveVideo(video Video, userID int32) error {
 
 	existingVideo := Video{}
 	err := r.db.First(&existingVideo, "id = ?", video.ID).Error
@@ -57,7 +62,7 @@ func (r YoutTubeDBRepository) SaveVideo(video Video, userID string) error {
 	return err
 }
 
-func (r YoutTubeDBRepository) SavePlaylistVideo(video Video, playlistID, userID string) error {
+func (r YoutTubeDBRepository) SavePlaylistVideo(video Video, playlistID string, userID int32) error {
 
 	err := r.SaveVideo(video, userID)
 	if err != nil {
@@ -69,9 +74,9 @@ func (r YoutTubeDBRepository) SavePlaylistVideo(video Video, playlistID, userID 
 	return err
 }
 
-func (r YoutTubeDBRepository) AddPlaylist(playlist Playlist, user_id string) error {
+func (r YoutTubeDBRepository) AddPlaylist(playlist Playlist, userID int32) error {
 	for _, v := range playlist.Videos {
-		err := r.SaveVideo(v, user_id)
+		err := r.SaveVideo(v, userID)
 		if err == nil {
 			// Correctly added the video
 			log.Printf("Added %s", v.Title)

@@ -7,7 +7,7 @@ import (
 	"recovertube/service/youtube"
 )
 
-func SaveVideo(videoID, userID string) (m.Video, error) {
+func SaveVideo(videoID string, userID int32) (m.Video, error) {
 	video, err := youtube.GetVideo(videoID)
 	if err != nil {
 		return m.Video{}, err
@@ -29,7 +29,7 @@ func SaveVideo(videoID, userID string) (m.Video, error) {
 	return video, nil
 }
 
-func SaveVideoToPlaylist(videoID, playlistID, userID string) error {
+func SaveVideoToPlaylist(videoID, playlistID string, userID int32) error {
 
 	ytRepo, err := m.GetYTRepository()
 	if err != nil {

@@ -8,21 +8,17 @@ import (
 	"gopkg.in/square/go-jose.v2"
 )
 
-func EncryptToken(userID, token string) (string, error) {
+func EncryptJWE(UserCredential UserCredential) (string, error) {
 	encrypter, err := jose.NewEncrypter(jose.A256GCM, jose.Recipient{Algorithm: jose.A256KW, Key: aesKey}, nil)
 	if err != nil {
 		log.Printf("Error creating jose Encrypter")
 		return "", err
 	}
 
-	payload := UserCredential{
-		UserID:     userID,
-		OAuthToken: token,
-	}
 	// Converting JwePayload struct to []byte
 	buf := new(bytes.Buffer)
 	enc := gob.NewEncoder(buf)
-	err = enc.Encode(payload)
+	err = enc.Encode(UserCredential)
 	if err != nil {
 		log.Printf("Error creating the bytes encoder")
 		return "", err
@@ -36,7 +32,7 @@ func EncryptToken(userID, token string) (string, error) {
 	return jwe.CompactSerialize()
 }
 
-func DecryptToken(token string) (UserCredential, error) {
+func DecryptJWE(token string) (UserCredential, error) {
 	parsedToken, err := jose.ParseEncrypted(token)
 	if err != nil {
 		log.Printf("Error parsing token [%s] : %s", token, err)
