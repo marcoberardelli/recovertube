@@ -3,6 +3,7 @@ package model
 import (
 	"log"
 	"os"
+	"time"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -14,26 +15,14 @@ type YoutTubeDBRepository struct {
 
 var ytRepo YoutTubeDBRepository
 
-func initYouTubeRepository(dsn string) error {
+func init() {
+	dsn := os.Getenv("PSQL_DSN")
 	_db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
-		return err
+		log.Fatalf("Error initializing yt repo")
 	}
 	ytRepo = YoutTubeDBRepository{db: _db}
 	ytRepo.db.AutoMigrate(&User{}, &Video{}, &Playlist{})
-	return nil
-}
-
-func init() {
-	dsn := os.Getenv("PSQL_DSN")
-	err := initYouTubeRepository(dsn)
-	if err != nil {
-		log.Fatalf("Error initializing YoutubeRepository")
-	}
-	err = initAuthRepository(dsn)
-	if err != nil {
-		log.Fatalf("Error initializing AuthRepository")
-	}
 }
 
 func GetYTRepository() (YoutTubeDBRepository, error) {
@@ -55,11 +44,16 @@ func (r YoutTubeDBRepository) SaveVideo(video Video, userID string) error {
 	} else if err != nil {
 		return err
 	}
+
+	existingVideo.LastUpdate = time.Now()
+	err = r.db.Save(&existingVideo).Error
+	if err != nil {
+		log.Printf("Error updating video.LastUpdate attribute")
+		return err
+	}
+
 	// Updating join table
 	err = r.db.Table("user_video").Create(&UserVideo{userID, video.ID}).Error
-
-	//TODO: store preview img
-
 	return err
 }
 

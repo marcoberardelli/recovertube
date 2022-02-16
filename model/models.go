@@ -11,6 +11,7 @@ var (
 	ErrNoMatchingPassword = errors.New("the password does not match")
 	ErrDatabase           = errors.New("error during the query")
 	ErrExistingVideo      = errors.New("the video is already stored in the database")
+	ErrUserNotRegistered  = errors.New("email is not registered")
 )
 
 type YoutubeRepository interface {
@@ -28,7 +29,7 @@ type AuthenticationRepository interface {
 	Logout(user User) error
 }
 
-type PreviewImgStore interface {
+type ThumbnailStore interface {
 	SaveImage(url string)
 	GetImage(videoID string)
 }

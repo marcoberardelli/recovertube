@@ -9,13 +9,13 @@ import (
 	"os"
 )
 
-type PreviewImgLocal struct {
+type ThumbnailLocalStore struct {
 	basePath string
 }
 
-var imgLocalStore = PreviewImgLocal{"img/"}
+var imgLocalStore = ThumbnailLocalStore{"img/thumbnail"}
 
-func (l PreviewImgLocal) SaveImage(url, filename string) error {
+func (l ThumbnailLocalStore) SaveImage(url, filename string) error {
 
 	response, err := http.Get(url)
 	if err != nil {
@@ -39,7 +39,7 @@ func (l PreviewImgLocal) SaveImage(url, filename string) error {
 	return err
 }
 
-func (l PreviewImgLocal) GetImage(filename string) error {
+func (l ThumbnailLocalStore) GetImage(filename string) error {
 
 	return nil
 }

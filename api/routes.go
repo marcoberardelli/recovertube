@@ -22,7 +22,7 @@ func AddVideo(c *gin.Context) {
 	}
 
 	// TODO: get userid by token auth
-	err = service.SaveVideo(id, tokenSerialized)
+	video, err := service.SaveVideo(id, tokenSerialized)
 	if err != nil {
 		c.JSON(500, "Internal error")
 	}
@@ -31,7 +31,6 @@ func AddVideo(c *gin.Context) {
 }
 
 func AddVideoPlaylist(c *gin.Context) {
-	//TODO: add in youtube playlist
 	videoID := c.PostForm("video_id")
 	playlistID := c.PostForm("playlist_id")
 
@@ -41,9 +40,9 @@ func AddVideoPlaylist(c *gin.Context) {
 		log.Printf("Error retreiving oauth token")
 		c.JSON(500, "Internal error")
 	}
-	// TODO: get userid by token auth
-
-	log.Printf("Added video: %s", video.Title)
+	// TODO: get userid by token
+	service.SaveVideoToPlaylist(videoID, playlistID, tokenSerialized)
+	log.Printf("Added video: %s", videoID)
 	c.JSON(200, "ok")
 
 }
