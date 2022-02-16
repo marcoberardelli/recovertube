@@ -13,7 +13,13 @@ type ThumbnailLocalStore struct {
 	basePath string
 }
 
-var imgLocalStore = ThumbnailLocalStore{"img/thumbnail"}
+// Pass an empty string to use the default path "img/thumbnail"
+func NewThumbnailLocalStore(basePath string) ThumbnailLocalStore {
+	if basePath == "" {
+		basePath = "img/thumbnail"
+	}
+	return ThumbnailLocalStore{basePath}
+}
 
 func (l ThumbnailLocalStore) SaveImage(url, filename string) error {
 
