@@ -33,7 +33,7 @@ func main() {
 
 	store := cookie.NewStore([]byte("secret"))
 	store.Options(sessions.Options{Domain: "127.0.0.1"})
-	r.Use(sessions.Sessions("mysession", store))
+	r.Use(sessions.Sessions("session", store))
 
 	registerRoutes(r)
 
