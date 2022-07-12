@@ -119,12 +119,11 @@ func OAuthCallback() gin.HandlerFunc {
 			c.JSON(409, "Please confirm your Google account before continuing")
 			return
 		}
-		userRepo := model.GetUserRepository()
-		_id, err := userRepo.GetUserID(info.Email)
+		_id, err := model.GetUserID(info.Email)
 		id := &_id
 		if err == model.ErrUserNotRegistered {
 			// Creates a new user
-			_id, err = userRepo.CreateUser(info.Email)
+			_id, err = model.CreateUser(info.Email)
 			if err != nil {
 				clearSession(c)
 				c.JSON(500, "Error creating user")

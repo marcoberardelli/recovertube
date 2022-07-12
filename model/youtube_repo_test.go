@@ -26,37 +26,6 @@ import (
 
 var videos = []Video{Video{ID: "dQw4w9WgXcQ", Title: "Rick Astley - Never Gonna Give You Up (Official Music Video)"}}
 
-func TestGetYTRepository(t *testing.T) {
-	_, errS := GetYTRepository()
-	if errS != ErrNoRepoInstance {
-		t.Fail()
-	}
-	_db, _, err := sqlmock.New()
-	if err != nil {
-		t.Fail()
-	}
-	dialector := postgres.New(postgres.Config{
-		Conn:       _db,
-		DriverName: "postgres",
-	})
-	db, err := gorm.Open(dialector, &gorm.Config{PrepareStmt: false})
-	if err != nil {
-		t.Fail()
-	}
-	ytRepo = YoutTubeDBRepository{db: db}
-
-	_, err = GetYTRepository()
-	if err != nil {
-		t.Fail()
-	}
-	db_, err := ytRepo.db.DB()
-	if err != nil {
-		t.Fail()
-	}
-	db_.Ping()
-
-}
-
 func TestAddVideo(t *testing.T) {
 	_db, mock, err := sqlmock.New()
 	sqlmock.NewWithDSN(os.Getenv("PSQL_DSN"))

@@ -17,7 +17,7 @@ package route
 
 import (
 	"log"
-	m "recovertube/model"
+	"recovertube/model"
 	"recovertube/youtube"
 
 	"github.com/gin-gonic/gin"
@@ -46,13 +46,7 @@ func AddVideo(c *gin.Context) {
 		return
 	}
 
-	repo, err := m.GetYTRepository()
-	if err != nil {
-		log.Printf("Error adding a video %+v", err)
-		return
-	}
-
-	err = repo.SaveVideo(video, playlistID, user.ID)
+	err = model.SaveVideo(video, playlistID, user.ID)
 	//TODO: fix error check
 	if err != nil {
 		return

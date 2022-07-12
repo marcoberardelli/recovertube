@@ -17,7 +17,12 @@ package model
 
 import (
 	"errors"
+	"log"
+	"os"
 	"time"
+
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
 )
 
 var (
@@ -28,6 +33,17 @@ var (
 	ErrExistingVideo      = errors.New("the video is already stored in the database")
 	ErrUserNotRegistered  = errors.New("email is not registered")
 )
+
+var db *gorm.DB
+
+func init() {
+	dsn := os.Getenv("PSQL_DSN")
+	_db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+	if err != nil {
+		log.Fatalf("Error initializing yt repo")
+	}
+	db = _db
+}
 
 type YoutubeRepository interface {
 	GetVideo(id string, userID int32) (Video, error)
